@@ -49,11 +49,21 @@ class Account:
             response = requests.post(url=urls.activity_url, headers=header, json=data)
             response.raise_for_status()
             if response.status_code == 200:
-                print("请求成功,活动:", act.name, response.text, "请求时间:", datetime.datetime.now())
-                if response.json().get("code") == 0 and response.json().get("message") == "成功":
-                    with self.lock:
+                print("请求成功,活动:",act.name , response.text, "请求时间:" ,datetime.datetime.now())
+                if(response.text == '{"code":0,"message":"成功","data":{"msg":"PU君提示：报名成功，请留意活动签到时间哦~"}}'):
+                    self.lock.acquire()
+                    try:
                         self.flag[act.id] = True
-                    print(f"报名成功,活动:{act.name}")
+                    finally:
+                        self.lock.release()
+                    break
+                if(response.text == '{"code":9405,"message":"您已报名，请勿重复操作","data":{}}'):
+                    self.lock.acquire()
+                    try:
+                        self.flag[act.id] = True
+                    finally:
+                        self.lock.release()
+                    break
             if i < 5:
                 time.sleep(0.1)
             elif i < 10:

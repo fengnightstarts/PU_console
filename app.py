@@ -99,7 +99,7 @@ def main_menu(acc, user, config):
         elif choice_split[0] == "add":
             add_act(all_list, filter_list, list_type, target_list, int(choice_split[1]))
         elif choice_split[0] == "fire":
-            bot.single_account(target_list,acc)
+            bot.single_acctivity(target_list,acc)
         elif choice_split[0] == "modify":
             value = input("is autoLogin? True/False")
             config["autoLogin"] = bool(value)
