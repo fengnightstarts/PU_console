@@ -2,6 +2,8 @@
 
 基于PU网页版模拟HTTP请求实现的PU
 
+少量代码参考自：https://github.com/RedForestLonvor/PU-SignUpBot
+
 基本上实现了命令行上列出所有可报名活动、根据学院过滤、报名的功能
 
 由于本人实在不想写了功能可能没有完善
