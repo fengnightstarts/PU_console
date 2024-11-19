@@ -38,7 +38,7 @@ class Account:
         if gap.total_seconds() > 1:
             time.sleep(gap.total_seconds()-1)
         if gap.total_seconds() > 0:
-            time.sleep((act.joinStartTime - datetime.datetime.now).total_seconds()*random.random(1,2))
+            time.sleep((act.joinStartTime - datetime.datetime.now).total_seconds()*random.random(0.9,1.5))
         i = 0
         while True:
             if self.flag[act.id]:
