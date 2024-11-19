@@ -41,7 +41,7 @@ def main():
 def modify_config(config):
     value = input("是否自动登录？ True/False")
     config["autoLogin"] = bool(value)
-    value = input("请输入学院名称\n 正确示例:计算机科学与工程学院/计算机\n错误输入实例:计算机学院\n")
+    value = input("请输入学院名称\n 正确示例:计算机科学与工程学院/计算机\n错误输入:计算机学院\n")
     config["myCollege"] = str(value)
     manager.saveConfig(config)
     activity.rules["college"] = config["myCollege"]
@@ -70,13 +70,6 @@ def login_menu(user, manager, acc, config):
             print("错误选项")
             
 def main_menu(acc, user, config):
-# list all
-# list filter
-# list target
-# info
-# fire
-# add act
-# delete act
     list_type = "all"
     all_list = acc.get_activity_list()
     all_list.sort(key=lambda act: act.joinStartTime)
@@ -84,7 +77,7 @@ def main_menu(acc, user, config):
     target_list = []
     while True:
         print("指令列表")
-        print("list all 列出所有未开始报名或一开始报名但未满员的活动")
+        print("list all 列出所有未开始报名或已开始报名但未满员的活动")
         print("list filter 列出所自己学院可以报名的活动")
         print("list target 列出已选择的活动")
         print("info")

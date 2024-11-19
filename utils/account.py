@@ -12,9 +12,10 @@ class Account:
         self.user_data = {}
         self.flag:dict = {"111":False}
         self.lock = threading.Lock()
-
+        # self.loginTime = None
     def login(self, user_data_input):
-        self.user_data = user_data_input
+        if user_data_input != None:
+            self.user_data = user_data_input
         for i in range(5):
             print("尝试登陆")
             response = requests.post(urls.login_url, headers=headers.HEADERS_LOGIN, json=user_data_input)
@@ -24,6 +25,7 @@ class Account:
             print("登录尝试次数:", i+1)
             if curToken:
                 self.token = curToken
+                # self.loginTime = datetime.datetime.now()
                 return curToken
         print("登录失败,获取token失败")
         return None
@@ -54,16 +56,13 @@ class Account:
                     print(f"报名成功,活动:{act.name}")
             if i < 5:
                 time.sleep(0.1)
+            elif i < 10:
+                time.sleep(0.5 * random.uniform(0.8, 1.5))
             elif i < 15:
-                time.sleep(0.5 * random.uniform(0.8, 1.0))
-            elif i < 30:
-                time.sleep(2 * random.uniform(0.8, 1.0))
-            elif i == 40:
+                time.sleep(2 * random.uniform(0.8, 1.5))
+            elif i == 20:
                 print("报名失败")
                 break
-
-    def get_start_time(self, id):
-        pass
 
     def get_activity_info(self, id):
         info_header = headers.HEADERS_ACTIVITY_INFO.copy()
@@ -107,12 +106,3 @@ class Account:
             if act.filter():
                 filter_list.append(act)
         return filter_list
-
-# # 示例使用
-# account_manager = AccountManager()
-# user_data_input = {"username": "test", "password": "test"}
-# account_manager.login(user_data_input)
-
-# Acc = Account()
-# user_data_input = {'userName': '202311070403', 'password': 'Skd@074757', 'sid': 208754666766336, 'device': 'pc'}
-# Acc.login(user_data_input)
