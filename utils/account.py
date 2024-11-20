@@ -18,7 +18,7 @@ class Account:
             self.user_data = user_data_input
         for i in range(5):
             print("尝试登陆")
-            response = requests.post(urls.login_url, headers=headers.HEADERS_LOGIN, json=user_data_input)
+            response = requests.post(urls.login_url, headers=headers.HEADERS_LOGIN, json=self.user_data)
             response.raise_for_status()
             # print(response.json())
             curToken = response.json().get("data", {}).get("token")

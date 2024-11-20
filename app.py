@@ -8,6 +8,10 @@ user = {}
 acc = None
 manager = None
 def main():
+    print("欢迎使用PU_console")
+    print("项目地址：https://github.com/fengnightstarts/PU_console")
+    print("作者：fengnightstarts")
+    print("有问题请到项目地址提")
     global user
     global config
     global acc
