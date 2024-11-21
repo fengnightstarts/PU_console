@@ -32,7 +32,9 @@ modify user/config：修改用户信息和配置
 
 抓取完毕可以用 list all/filter/target 列出全部或过滤、加入报名名单的活动列表
 
-add (活动序号)
+注意：一定要先list all 或者list filter
+
+使用 add (活动序号) 添加活动至报名列表
 
 活动序号为你想报名的活动在上次list的活动名单中的序号，无需加括号
 
