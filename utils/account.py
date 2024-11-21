@@ -27,6 +27,9 @@ class Account:
                 self.token = curToken
                 # self.loginTime = datetime.datetime.now()
                 return curToken
+            else:
+                print("登录失败,返回信息：")
+                print(response.text)
         print("登录失败,获取token失败")
         return None
 
@@ -40,7 +43,7 @@ class Account:
         if gap.total_seconds() > 1:
             time.sleep(gap.total_seconds()-1)
         if gap.total_seconds() > 0:
-            time.sleep((act.joinStartTime - datetime.datetime.now).total_seconds()*random.random(0.9,1.5))
+            time.sleep((act.joinStartTime - datetime.datetime.now).total_seconds()*random.random(1,1.5))
         i = 0
         while True:
             if self.flag[act.id]:
@@ -102,12 +105,11 @@ class Account:
             for act in list_data:
                 if "报名未开始" in act["startTimeValue"] or ("报名进行中" in act["startTimeValue"] and act["joinUserCount"] < act["allowUserCount"]):
                     flag = False
-                    time.sleep(0.5)
+                    time.sleep(0.3)
+                    print(f"活动:{act['name']}报名未开始或报名人数未满，正在获取详细信息")
                     all_activity_data.append(self.get_activity_info(act["id"]))
-                    print(f"活动:{act['name']}可报名，正在获取详细信息")
             if flag:
                 break
-            time.sleep(0.1)
         return all_activity_data
 
     def get_filter_list(self, all_act_list):
