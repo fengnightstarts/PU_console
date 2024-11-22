@@ -25,6 +25,7 @@ class Account:
             print("登录尝试次数:", i+1)
             if curToken:
                 self.token = curToken
+                print("token = ", self.token)
                 # self.loginTime = datetime.datetime.now()
                 return curToken
             else:

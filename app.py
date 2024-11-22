@@ -2,24 +2,29 @@ from utils import user_data_manager
 from utils import account
 from utils import bot
 from utils import activity
-config = {}
-user = {}
+import datetime
+config:dict
+user:dict
 # config = {}
 acc = None
 manager = None
+target_list:list
 def main():
     print("欢迎使用PU_console")
-    print("项目地址：https://github.com/fengnightstarts/PU_console")
-    print("作者：fengnightstarts")
+    print("项目地址: https://github.com/fengnightstarts/PU_console")
+    print("作者: fengnightstarts")
     print("有问题请到项目地址提")
     global user
     global config
     global acc
     global manager
+    global target_list
     flag = True
     manager = user_data_manager.UserDataManager(file_path="data.json")
     user = manager.getUserData()
     config = manager.getConfig()
+    target_list = manager.get_target_list()
+    
     acc = account.Account()
     while True:
         if config == {}:
@@ -41,9 +46,10 @@ def main():
             if acc.login(user):
                 main_menu(acc, user, config)
         else:
-            login_menu(user, manager, acc, config)
+            login_menu(manager, acc)
         
 def modify_config(config):
+    # config["Year"] = int(input("请输入年级, 注意：年级为活动"))
     value = input("是否自动登录？ True/False")
     config["autoLogin"] = bool(value)
     value = input("请输入学院名称\n 正确示例:计算机科学与工程学院/计算机\n错误输入:计算机学院\n")
@@ -51,7 +57,9 @@ def modify_config(config):
     manager.saveConfig(config)
     activity.rules["college"] = config["myCollege"]
     
-def login_menu(user, manager, acc, config):
+def login_menu( manager, acc):
+    global user
+    global config
     while True:
         print("info")
         print("modify user")
@@ -63,6 +71,7 @@ def login_menu(user, manager, acc, config):
             print(config)
         elif choice == "modify user":
             manager.createUser()
+            user = manager.getUserData()
         elif choice == "login":
             if acc.login(user):
                 main_menu(acc, user, config)
@@ -71,17 +80,25 @@ def login_menu(user, manager, acc, config):
         elif choice == "modify config":
             print(config)
             modify_config(config)
+            config = manager.getConfig()
         else:
             print("错误选项")
             
 def main_menu(acc, user, config):
     list_type = "filter"
-    all_list = acc.get_activity_list()
-    all_list.sort(key=lambda act: act.joinStartTime)
-    filter_list = acc.get_filter_list(all_list)
-    target_list = []
+    all_list:list = []
+    filter_list:list = []
+    global target_list
     list(["filter"], all_list, filter_list,target_list)
-    
+    if target_list != []:
+        choice = input("检测到已保存的活动, 是否继续报名?, 选F不会报名, 但会获取活动信息, 选择D以清空列表 T/F/D: ")
+        if not (choice == "D" or choice == "d"):
+            init_target_list(target_list)
+        if choice == "T" or choice == "t":
+            bot.single_acctivity(target_list,acc)
+    else:
+        all_list = acc.get_activity_list()
+        filter_list = acc.get_filter_list(all_list)
     while True:
         print("指令列表")
         print("list all 列出所有未开始报名或已开始报名但未满员的活动")
@@ -92,40 +109,36 @@ def main_menu(acc, user, config):
         print("fire 开始报名")
         print("add index 添加活动到target")
         print("del index 删除target中的活动(不支持删除已经fire的活动)")
-        
+        print("save 保存当前target")
         choice = input("请输入你的选择：")
         choice_split = choice.split()
         
         if choice_split[0] == "list":
-            list(choice_split[1:], all_list, filter_list, target_list)
-            if choice_split[1] == "all":
-                list_type = "all"
-            elif choice_split[1] == "filter":
+            list(choice_split[1:], all_list, filter_list, target_list)  
+            if choice_split[1] == "filter":
                 list_type = "filter"
-                
+            elif choice_split[1] == "all":
+                list_type = "all"
         elif choice_split[0] == "info":
             print(user)
             print(acc.token)
-            print(config)
-            
+            print(config)            
         elif choice_split[0] == "add":
             add_act(all_list, filter_list, list_type, target_list, int(choice_split[1]))
-            
+        elif choice_split[0] == "del":
+            del_act(target_list, choice_split[1])
         elif choice_split[0] == "fire":
-            bot.single_acctivity(target_list,acc)
-            
+            bot.single_acctivity(target_list,acc)       
         elif choice_split[0] == "modify":
             value = input("是否自动登录 True/False")
             config["autoLogin"] = bool(value)
             value = input("请输入学院名称")
             config["myCollege"] = value
             manager.saveConfig(config)
-            
-        elif choice_split[0] == "del":
-            del_act(target_list, choice_split[1])
-            
         elif choice_split[0] == "back":
             return
+        elif choice_split[0] == "save":
+            manager.saveTargetList(target_list)
         else:
             print("输入错误")
 
@@ -135,11 +148,35 @@ def del_act(target_list, index):
         print("序号超限")
     else:
         target_list.pop(i - 1)
-        
+
+def init_target_list(target_list:list):
+    index = 0
+    while index < len(target_list):
+        act_id = target_list[index]
+        print(f"正在获取活动{act_id}的信息")
+        try:
+            act = acc.get_activity_info(act_id)
+        except Exception as e:
+            print(f"获取活动{act_id}信息失败")
+            target_list.pop(index)
+            continue
+        flag = False
+        if act.hasJoin == 1:
+            print(f"活动{act.name}已经报名,将删除")
+            flag = True
+        elif act.allowUserCount == act.joinUserCount:
+            print(f"活动{act.name}已经满员,将删除")
+            flag = True
+        elif act.joinEndTime < datetime.datetime.now():
+            print(f"活动{act.name}报名已经结束,将删除")
+            flag = True
+        if flag:
+            target_list.pop(index)
+        else:
+            target_list[index] = act
+            index += 1
 def add_act(all_list, filter_list, list_type, target_list, index):
-    
     i = int(index)
-    
     if list_type == "all":
         if i > len(all_list):
             print("输入错误")
@@ -173,9 +210,13 @@ def list(split_choice, all_list, filter_list, target_list):
         print("    已报名人数:",act.joinUserCount)
         
         if act.allowCollege == []:
-            print("    活动学院: 全部")
+            print("    活动学院: 全部", end="")
         else:
-            print("    活动学院:",act.allowCollege)
+            print("    活动学院:",act.allowCollege, end="")
+        if act.allowYear == []:
+            print("    活动年级: 全部")
+        else:
+            print("    活动年级:",act.allowYear)
 
 if __name__ == "__main__":
     main()

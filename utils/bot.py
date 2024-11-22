@@ -1,17 +1,17 @@
 import threading
 import datetime
 import time
-def single_acctivity(acts, Acc):
+def single_acctivity(acts:list, Acc):
     threads = []
     for act in acts:
         Acc.flag[act.id] = False
-        thread = threading.Thread(target=single, args=(act,Acc))
+        thread = threading.Thread(target=single, args=(act,Acc,acts))
         threads.append(thread)
         thread.start()
     # for thread in threads:
     #     thread.join()
         
-def single(act,Acc):
+def single(act,Acc,acts):
     threads = []
     gap = act.joinStartTime - datetime.datetime.now()
     print(f"活动:{act.name}未开始报名,等待{gap.total_seconds()}秒")
@@ -24,3 +24,8 @@ def single(act,Acc):
         threads.append(thread)
     for thread in threads:
         thread.join()
+    if Acc.flag[act.id]:
+        print(f"活动:{act.name}报名成功")
+    else:
+        print(f"活动:{act.name}报名失败")
+    acts.remove(act)

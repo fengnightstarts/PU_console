@@ -20,7 +20,12 @@ class UserDataManager:
  
     def getUserData(self):
         return self.data.get("user", {})
-   
+    def saveTargetList(self, target_list):
+        self.data["target_list"] = [act.id for act in target_list]
+        self.save()
+    def get_target_list(self):
+        return self.data.get("target_list", [])
+    
     def getConfig(self):
         return self.data.get("config", {})
    
@@ -29,10 +34,12 @@ class UserDataManager:
         self.save()
    
     def save(self):
-        with open(self.file_path, 'w',encoding='utf-8') as file:
-            file.write('')
-            json.dump(self.data, file)
-  
+        try:
+            with open(self.file_path, 'w',encoding='utf-8') as file:
+                file.write('')
+                json.dump(self.data, file)
+        except Exception as e:
+            print("配置保存失败, 请检查程序是否有权限写入文件.若文件存在请删除该文件")
     def get_shool_list(self):
         response = requests.get(urls.school_list_url, headers=headers.HEADERS_GET_SCHOOL)
         return response.json()

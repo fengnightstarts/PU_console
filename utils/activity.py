@@ -6,11 +6,13 @@ class Activity:
         self.name = info_data.get("name")
         self.credit = info_data.get("credit")
         self.joinStartTime = self.parse_datetime(info_data.get("joinStartTime"))
+        self.joinEndTime = self.parse_datetime(info_data.get("joinEndTime"))
         self.startTime = self.parse_datetime(info_data.get("startTime"))
         self.endTime = self.parse_datetime(info_data.get("endTime"))
         self.address = info_data.get("address")
         self.categoryName = info_data.get("categoryName")
         self.allowCollege = [college["name"] for college in info_data.get("allowCollege")]
+        self.allowYear = [year["name"] for year in info_data.get("allowYear")]
         self.allowUserType = info_data["allowUserType"]
         self.joinType = info_data["joinType"]
         self.allowUserCount = info_data["allowUserCount"]
