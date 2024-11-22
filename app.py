@@ -99,7 +99,13 @@ def main_menu(acc, user, config):
     else:
         all_list = acc.get_activity_list()
         filter_list = acc.get_filter_list(all_list)
+        list(["filter"], all_list, filter_list,target_list)
     while True:
+        print("注意: 如果您没有保存活动列表, 则会自动抓取活动信息并列出 list filter")
+        print("注意: 如果您已经保存活动列表, 则会自动读取保存的活动列表, 且不会自动抓取活动列表, 因此若您想添加新的活动请先list filter或list all")
+        print("注意: 仅本脚本运行时仅仅会抓取一次活动列表, 若想更新活动列表, 请使用flush")
+        print("注意: 活动序号指的是您想报名的活动在您上次list的活动列表l中的序号")
+        print("例如: 您上次使用list filter, 列出了您可以报名的活动, 您想报名其中的第一个活动, 则输入add 1")
         print("指令列表")
         print("list all 列出所有未开始报名或已开始报名但未满员的活动")
         print("list filter 列出所自己学院可以报名的活动")
@@ -110,10 +116,14 @@ def main_menu(acc, user, config):
         print("add index 添加活动到target")
         print("del index 删除target中的活动(不支持删除已经fire的活动)")
         print("save 保存当前target")
+        print("flush 重新读取活动列表")
         choice = input("请输入你的选择：")
         choice_split = choice.split()
         
         if choice_split[0] == "list":
+            if all_list == [] or filter_list == []:
+                all_list = acc.get_activity_list()
+                filter_list = acc.get_filter_list(all_list)
             list(choice_split[1:], all_list, filter_list, target_list)  
             if choice_split[1] == "filter":
                 list_type = "filter"
@@ -139,6 +149,9 @@ def main_menu(acc, user, config):
             return
         elif choice_split[0] == "save":
             manager.saveTargetList(target_list)
+        elif choice_split[0] == "flush":
+            all_list = acc.get_activity_list()
+            filter_list = acc.get_filter_list(all_list)
         else:
             print("输入错误")
 
