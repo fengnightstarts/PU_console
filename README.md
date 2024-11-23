@@ -34,6 +34,8 @@ modify user/config：修改用户信息和配置
 
 list all/filter/target 列出全部或过滤、加入报名名单的活动列表
 
+注意：序号是list filter中的序号！请先list再添加活动！
+
 使用 add (活动序号) 添加活动至报名列表
 
 输入 del (活动序号) 从target列表中删除活动，但是fire过后即使删除了活动也不会停止报名，因此fire之前请使用list target检查活动是否有误
