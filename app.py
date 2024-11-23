@@ -14,6 +14,7 @@ def main():
     print("项目地址: https://github.com/fengnightstarts/PU_console")
     print("作者: fengnightstarts")
     print("有问题请到项目地址提")
+    print("注意: 登录时间可能较长或失败一两次, 请耐心等待")
     global user
     global config
     global acc
@@ -49,10 +50,9 @@ def main():
             login_menu(manager, acc)
         
 def modify_config(config):
-    # config["Year"] = int(input("请输入年级, 注意：年级为活动"))
     value = input("是否自动登录？ True/False")
     config["autoLogin"] = bool(value)
-    value = input("请输入学院名称\n 正确示例:计算机科学与工程学院/计算机\n错误输入:计算机学院\n")
+    value = input("请输入学院名称\n 例如: 若您的学院全称为\"计算机科学与工程学院\"\n正确示例:计算机科学与工程学院/计算机\n错误输入:计算机学院\n")
     config["myCollege"] = str(value)
     manager.saveConfig(config)
     activity.rules["college"] = config["myCollege"]
@@ -91,11 +91,15 @@ def main_menu(acc, user, config):
     global target_list
     list(["filter"], all_list, filter_list,target_list)
     if target_list != []:
-        choice = input("检测到已保存的活动, 是否继续报名?, 选F不会报名, 但会获取活动信息, 选择D以清空列表 T/F/D: ")
+        print("检测到已保存的活动, 脚本将不会自动抓取活动列表, 只有当您选择list all 或 list filter或flush时才会抓取活动列表")
+        choice = input("检测到已保存的活动, 是否继续报名?\n选F不会报名, 但会获取活动信息, 选D以清空列表 T/F/D: ")
         if not (choice == "D" or choice == "d"):
             init_target_list(target_list)
         if choice == "T" or choice == "t":
             bot.single_acctivity(target_list,acc)
+        elif choice == "D" or choice == "d":
+            target_list = []
+            acc.saveTargetList(target_list)
     else:
         all_list = acc.get_activity_list()
         filter_list = acc.get_filter_list(all_list)
@@ -103,7 +107,7 @@ def main_menu(acc, user, config):
     while True:
         print("注意: 如果您没有保存活动列表, 则会自动抓取活动信息并列出 list filter")
         print("注意: 如果您已经保存活动列表, 则会自动读取保存的活动列表, 且不会自动抓取活动列表, 因此若您想添加新的活动请先list filter或list all")
-        print("注意: 仅本脚本运行时仅仅会抓取一次活动列表, 若想更新活动列表, 请使用flush")
+        print("注意: 本脚本运行时仅仅会抓取一次活动列表, 若想更新活动列表, 请使用flush")
         print("注意: 活动序号指的是您想报名的活动在您上次list的活动列表l中的序号")
         print("例如: 您上次使用list filter, 列出了您可以报名的活动, 您想报名其中的第一个活动, 则输入add 1")
         print("指令列表")
@@ -115,8 +119,8 @@ def main_menu(acc, user, config):
         print("fire 开始报名")
         print("add index 添加活动到target")
         print("del index 删除target中的活动(不支持删除已经fire的活动)")
-        print("save 保存当前target")
-        print("flush 重新读取活动列表")
+        print("save 保存当前target列表到本地")
+        print("flush 重新抓取活动列表")
         choice = input("请输入你的选择：")
         choice_split = choice.split()
         
@@ -216,6 +220,7 @@ def list(split_choice, all_list, filter_list, target_list):
         
         print(i,": ",act.name," PU分值:",act.credit," 是否已报名:",act.hasJoin)
         print("    报名开始时间:",act.joinStartTime)
+        print("    报名结束时间:",act.joinEndTime)
         print("    活动开始时间:",act.startTime)
         print("    活动结束时间:",act.endTime)
         print("    活动类别: ",act.categoryName, " 活动地点:",act.address)
