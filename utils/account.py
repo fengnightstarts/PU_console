@@ -1,10 +1,9 @@
 import datetime
 import time
 import requests
-from utils import headers, urls
+from utils import headers, urls, activity
 import threading
 import random
-from utils import activity
 
 class Account:
     def __init__(self):
@@ -106,7 +105,7 @@ class Account:
             for act in list_data:
                 if "报名未开始" in act["startTimeValue"] or ("报名进行中" in act["startTimeValue"] and act["joinUserCount"] < act["allowUserCount"]):
                     flag = False
-                    time.sleep(0.3)
+                    time.sleep(0.1)
                     print(f"活动:{act['name']}报名未开始或报名人数未满，正在获取详细信息")
                     all_activity_data.append(self.get_activity_info(act["id"]))
             if flag:

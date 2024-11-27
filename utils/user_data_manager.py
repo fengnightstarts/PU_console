@@ -40,9 +40,9 @@ class UserDataManager:
                 json.dump(self.data, file)
         except Exception as e:
             print("配置保存失败, 请检查程序是否有权限写入文件.若文件存在请删除该文件")
-    def get_shool_list(self):
-        response = requests.get(urls.school_list_url, headers=headers.HEADERS_GET_SCHOOL)
-        return response.json()
+    # def get_shool_list(self):
+    #     response = requests.get(urls.school_list_url, headers=headers.HEADERS_GET_SCHOOL)
+    #     return response.json()
   
     def getMatchSchool(self, school_name,school_list):
         school_list = [school for school in school_list if school_name in school["name"]]
@@ -52,27 +52,34 @@ class UserDataManager:
         return school_list
    
     def selectSchool(self, school_list):
-        print("Please select the school you want to join:")
+        print("以下是匹配到的学校列表:")
         for i, school in enumerate(school_list):
             print(f"{i+1}. {school['name']}")
-        n = input("Please enter the number of the school you want to join:")
+        n = input("请输入学校序号, 序号从1开始: ")
         if(n.isdigit() and 1 <= int(n) <= len(school_list)):
             return school_list[int(n)-1]
         else:
+            print("序号输入错误")
             return None
  
     def getSID(self, school_name):
-        print(f"Searching for schools with the name {school_name}...")
+        print(f"正在获取学校列表")
         school_list = requests.get(urls.school_list_url, headers=headers.HEADERS_GET_SCHOOL).json()
+        if not school_list:
+            print("获取学校列表失败, 请稍后再试")
+            return None
         matchSchoolList = []
-        while not matchSchoolList:
-            matchSchoolList = self.getMatchSchool(school_name, school_list)
+        matchSchoolList = self.getMatchSchool(school_name, school_list)
+        if not matchSchoolList:
+            return None
         if len(school_list) > 1:
             selectedSchool = self.selectSchool(matchSchoolList)
         elif len(school_list) == 1:
             selectedSchool = school_list[0]
         else:
             print("No schools found.")
+            return None
+        if not selectedSchool:
             return None
         return selectedSchool["go_id"]
   

@@ -19,7 +19,6 @@ class Activity:
         self.joinUserCount = info_data["joinUserCount"]
         self.hasJoin = hasJoin
     def parse_datetime(self, date_str):
-        
         if date_str:
             return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
         return None
@@ -44,11 +43,3 @@ class Activity:
                 f"endTime={self.endTime}, address={self.address}, categoryName={self.categoryName})")
 
 rules = {}
-
-def isAllow(allowCollegeList, college):
-    if(allowCollegeList == []):
-        return True
-    for item in allowCollegeList:
-        if college in item["name"]:
-            return True
-    return False

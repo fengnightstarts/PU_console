@@ -5,7 +5,6 @@ from utils import activity
 import datetime
 config:dict
 user:dict
-# config = {}
 acc = None
 manager = None
 target_list:list
