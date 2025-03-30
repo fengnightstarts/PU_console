@@ -1,6 +1,6 @@
 ### 一个支持多线程暴力报名的命令行版PU口袋校园自动报名工具
 
-###本脚本已终止维护，使用pyside开发的UI界面版链接：https://github.com/fengnightstarts/pu_client
+### 本脚本已终止维护，使用pyside开发的UI界面版链接：https://github.com/fengnightstarts/pu_client
 
 基于PU网页版模拟HTTP请求实现的PU
 
